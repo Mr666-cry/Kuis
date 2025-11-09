@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaming Hub - Portal Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+      color: white;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 15px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero h2 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #aaa;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .game-card {
+      background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
+      border-radius: 15px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .game-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .game-icon {
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+    }
+
+    .game-info {
+      padding: 15px;
+    }
+
+    .game-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .game-desc {
+      color: #aaa;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .game-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .game-category {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #2563eb;
+    }
+
+    .btn-back {
+      background: #4b5563;
+      margin-bottom: 20px;
+    }
+
+    .btn-back:hover {
+      background: #374151;
+    }
+
+    .game-screen {
+      display: none;
+      text-align: center;
+    }
+
+    .game-screen.active {
+      display: block;
+    }
+
+    .ttt-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .ttt-cell {
+      width: 100px;
+      height: 100px;
+      background: #2d2d44;
+      border: none;
+      font-size: 40px;
+      color: white;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .ttt-cell:hover {
+      background: #3d3d54;
+    }
+
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 80px);
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .memory-card {
+      width: 80px;
+      height: 80px;
+      background: #2d2d44;
+      border: none;
+      font-size: 40px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.3s;
+    }
+
+    .memory-card.flipped {
+      background: #3b82f6;
+    }
+
+    .score-display {
+      font-size: 20px;
+      margin: 20px 0;
+      color: #60a5fa;
+    }
+
+    .result-msg {
+      font-size: 24px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+
+    .result-msg.win {
+      color: #22c55e;
+    }
+
+    .result-msg.draw {
+      color: #eab308;
+    }
+
+    canvas {
+      border: 4px solid #4b5563;
+      border-radius: 10px;
+      margin: 20px auto;
+      display: block;
+      max-width: 90%;
+      height: auto;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 60px);
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .control-btn {
+      width: 60px;
+      height: 60px;
+      background: #4b5563;
+      border: none;
+      color: white;
+      font-size: 24px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .control-btn:hover {
+      background: #374151;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-label {
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+      .hero h2 {
+        font-size: 28px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .ttt-grid {
+        grid-template-columns: repeat(3, 80px);
+      }
+
+      .ttt-cell {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+      }
+
+      .memory-grid {
+        grid-template-columns: repeat(4, 70px);
+        gap: 8px;
+      }
+
+      .memory-card {
+        width: 70px;
+        height: 70px;
+        font-size: 30px;
+      }
+
+      .controls {
+        grid-template-columns: repeat(3, 50px);
+      }
+
+      .control-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h2 {
+        font-size: 24px;
+      }
+
+      .logo {
+        font-size: 20px;
+      }
+
+      .game-icon {
+        height: 120px;
+        font-size: 50px;
+      }
+
+      .game-title {
+        font-size: 18px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+
+      .ttt-grid {
+        grid-template-columns: repeat(3, 70px);
+        gap: 6px;
+      }
+
+      .ttt-cell {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
+      }
+
+      .memory-grid {
+        grid-template-columns: repeat(4, 60px);
+        gap: 6px;
+      }
+
+      .memory-card {
+        width: 60px;
+        height: 60px;
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">🎮 Gaming Hub</div>
+      <div>⭐ Portal Game Seru</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="home-screen">
+      <div class="hero">
+        <h2>Koleksi Game Seru</h2>
+        <p>3 game menarik siap dimainkan! Pilih favorit kamu 🎮</p>
+      </div>
+
+      <div class="games-grid">
+        <div class="game-card" onclick="loadGame('tictactoe')">
+          <div class="game-icon" style="background: linear-gradient(135deg, #667eea, #764ba2)">⭕</div>
+          <div class="game-info">
+            <div class="game-title">Tic Tac Toe</div>
+            <div class="game-desc">Game klasik X dan O untuk 2 pemain</div>
+            <div class="game-footer">
+              <span class="game-category">Strategi</span>
+              <button class="btn">Main</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-card" onclick="loadGame('memory')">
+          <div class="game-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c)">🧠</div>
+          <div class="game-info">
+            <div class="game-title">Memory Game</div>
+            <div class="game-desc">Uji daya ingat dengan mencocokkan kartu</div>
+            <div class="game-footer">
+              <span class="game-category">Puzzle</span>
+              <button class="btn">Main</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-card" onclick="loadGame('snake')">
+          <div class="game-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7)">🐍</div>
+          <div class="game-info">
+            <div class="game-title">Snake Game</div>
+            <div class="game-desc">Game klasik ular yang terus tumbuh</div>
+            <div class="game-footer">
+              <span class="game-category">Arcade</span>
+              <button class="btn">Main</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tic Tac Toe -->
+    <div id="tictactoe-screen" class="game-screen">
+      <button class="btn btn-back" onclick="backHome()">← Kembali</button>
+      <h2>Tic Tac Toe ⭕</h2>
+      <div class="score-display" id="ttt-turn">Giliran: X</div>
+      <div class="result-msg" id="ttt-result"></div>
+      <div class="game-board">
+        <div class="ttt-grid" id="ttt-grid"></div>
+      </div>
+      <button class="btn" onclick="resetTTT()">Main Lagi</button>
+    </div>
+
+    <!-- Memory Game -->
+    <div id="memory-screen" class="game-screen">
+      <button class="btn btn-back" onclick="backHome()">← Kembali</button>
+      <h2>Memory Game 🧠</h2>
+      <div class="score-display">Gerakan: <span id="memory-moves">0</span></div>
+      <div class="result-msg" id="memory-result"></div>
+      <div class="game-board">
+        <div class="memory-grid" id="memory-grid"></div>
+      </div>
+      <button class="btn" onclick="resetMemory()">Main Lagi</button>
+    </div>
+
+    <!-- Snake -->
+    <div id="snake-screen" class="game-screen">
+      <button class="btn btn-back" onclick="backHome()">← Kembali</button>
+      <h2>Snake Game 🐍</h2>
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-label">Skor</div>
+          <div class="stat-value" id="snake-score">0</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Tertinggi</div>
+          <div class="stat-value" id="snake-high">0</div>
+        </div>
+      </div>
+      <div class="result-msg" id="snake-msg">Tekan tombol untuk mulai!</div>
+      <canvas id="snake-canvas" width="400" height="400"></canvas>
+      <div class="controls">
+        <div></div>
+        <button class="control-btn" onclick="snakeControl('up')">↑</button>
+        <div></div>
+        <button class="control-btn" onclick="snakeControl('left')">←</button>
+        <button class="control-btn" onclick="snakeControl('down')">↓</button>
+        <button class="control-btn" onclick="snakeControl('right')">→</button>
+      </div>
+      <button class="btn" onclick="resetSnake()">Main Lagi</button>
+    </div>
+  </div>
+
+  <script>
+    // NAVIGATION
+    function loadGame(game) {
+      document.getElementById('home-screen').style.display = 'none';
+      document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(game + '-screen').classList.add('active');
+      
+      if (game === 'tictactoe') initTTT();
+      if (game === 'memory') initMemory();
+      if (game === 'snake') initSnake();
+    }
+
+    function backHome() {
+      document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('home-screen').style.display = 'block';
+      if (snakeInterval) clearInterval(snakeInterval);
+    }
+
+    // TIC TAC TOE
+    let tttBoard = Array(9).fill(null);
+    let tttPlayer = 'X';
+    let tttWinner = null;
+
+    function initTTT() {
+      tttBoard = Array(9).fill(null);
+      tttPlayer = 'X';
+      tttWinner = null;
+      const grid = document.getElementById('ttt-grid');
+      grid.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('button');
+        cell.className = 'ttt-cell';
+        cell.onclick = () => tttMove(i);
+        grid.appendChild(cell);
+      }
+      document.getElementById('ttt-turn').textContent = 'Giliran: X';
+      document.getElementById('ttt-result').textContent = '';
+      document.getElementById('ttt-result').className = 'result-msg';
+    }
+
+    function tttMove(i) {
+      if (tttBoard[i] || tttWinner) return;
+      tttBoard[i] = tttPlayer;
+      document.getElementById('ttt-grid').children[i].textContent = tttPlayer;
+      
+      const winner = checkTTTWinner();
+      if (winner) {
+        tttWinner = winner;
+        if (winner === 'D') {
+          document.getElementById('ttt-result').textContent = 'Seri! 🤝';
+          document.getElementById('ttt-result').className = 'result-msg draw';
+        } else {
+          document.getElementById('ttt-result').textContent = `Pemenang: ${winner}! 🎉`;
+          document.getElementById('ttt-result').className = 'result-msg win';
+        }
+        document.getElementById('ttt-turn').textContent = '';
+      } else {
+        tttPlayer = tttPlayer === 'X' ? 'O' : 'X';
+        document.getElementById('ttt-turn').textContent = 'Giliran: ' + tttPlayer;
+      }
+    }
+
+    function checkTTTWinner() {
+      const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+      for (let line of lines) {
+        const [a,b,c] = line;
+        if (tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) {
+          return tttBoard[a];
+        }
+      }
+      return tttBoard.every(c => c) ? 'D' : null;
+    }
+
+    function resetTTT() {
+      initTTT();
+    }
+
+    // MEMORY GAME
+    const memEmojis = ['🎮', '🎯', '🎲', '🎪', '🎨', '🎭', '🎸', '🎹'];
+    let memCards = [];
+    let memFlipped = [];
+    let memMatched = [];
+    let memMoves = 0;
+
+    function initMemory() {
+      memCards = [...memEmojis, ...memEmojis]
+        .sort(() => Math.random() - 0.5)
+        .map((emoji, i) => ({ id: i, emoji }));
+      memFlipped = [];
+      memMatched = [];
+      memMoves = 0;
+      
+      const grid = document.getElementById('memory-grid');
+      grid.innerHTML = '';
+      memCards.forEach(card => {
+        const btn = document.createElement('button');
+        btn.className = 'memory-card';
+        btn.textContent = '?';
+        btn.onclick = () => memClick(card.id);
+        btn.id = 'mem-' + card.id;
+        grid.appendChild(btn);
+      });
+      
+      document.getElementById('memory-moves').textContent = '0';
+      document.getElementById('memory-result').textContent = '';
+      document.getElementById('memory-result').className = 'result-msg';
+    }
+
+    function memClick(id) {
+      if (memFlipped.length === 2 || memFlipped.includes(id) || memMatched.includes(id)) return;
+      
+      memFlipped.push(id);
+      const btn = document.getElementById('mem-' + id);
+      btn.textContent = memCards[id].emoji;
+      btn.classList.add('flipped');
+
+      if (memFlipped.length === 2) {
+        memMoves++;
+        document.getElementById('memory-moves').textContent = memMoves;
+        
+        const [first, second] = memFlipped;
+        if (memCards[first].emoji === memCards[second].emoji) {
+          memMatched.push(first, second);
+          memFlipped = [];
+          
+          if (memMatched.length === memCards.length) {
+            document.getElementById('memory-result').textContent = `Selesai dalam ${memMoves} gerakan! 🎉`;
+            document.getElementById('memory-result').className = 'result-msg win';
+          }
+        } else {
+          setTimeout(() => {
+            memFlipped.forEach(idx => {
+              const b = document.getElementById('mem-' + idx);
+              b.textContent = '?';
+              b.classList.remove('flipped');
+            });
+            memFlipped = [];
+          }, 1000);
+        }
+      }
+    }
+
+    function resetMemory() {
+      initMemory();
+    }
+
+    // SNAKE GAME
+    const snakeCanvas = document.getElementById('snake-canvas');
+    const snakeCtx = snakeCanvas ? snakeCanvas.getContext('2d') : null;
+    const gridSize = 20;
+    const tileCount = 20;
+    
+    let snake = [{ x: 10, y: 10 }];
+    let direction = { x: 0, y: 0 };
+    let food = { x: 15, y: 15 };
+    let snakeScore = 0;
+    let snakeHigh = 0;
+    let snakeGameOver = false;
+    let snakeStarted = false;
+    let snakeInterval = null;
+
+    function initSnake() {
+      snake = [{ x: 10, y: 10 }];
+      direction = { x: 0, y: 0 };
+      food = { x: 15, y: 15 };
+      snakeScore = 0;
+      snakeGameOver = false;
+      snakeStarted = false;
+      
+      document.getElementById('snake-score').textContent = '0';
+      document.getElementById('snake-msg').textContent = 'Tekan tombol untuk mulai!';
+      drawSnake();
+    }
+
+    function drawSnake() {
+      if (!snakeCtx) return;
+      
+      snakeCtx.fillStyle = '#1a1a2e';
+      snakeCtx.fillRect(0, 0, 400, 400);
+
+      snakeCtx.fillStyle = '#0f3460';
+      for (let i = 0; i < tileCount; i++) {
+        for (let j = 0; j < tileCount; j++) {
+          if ((i + j) % 2 === 0) {
+            snakeCtx.fillRect(i * gridSize, j * gridSize, gridSize, gridSize);
+          }
+        }
+      }
+
+      snakeCtx.fillStyle = '#e94560';
+      snakeCtx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+
+      snake.forEach((segment, index) => {
+        snakeCtx.fillStyle = index === 0 ? '#16db93' : '#0fbcb0';
+        snakeCtx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+      });
+    }
+
+    function snakeLoop() {
+      if (!snakeStarted || snakeGameOver) return;
+
+      const head = {
+        x: snake[0].x + direction.x,
+        y: snake[0].y + direction.y
+      };
+
+      if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+        gameOver();
+        return;
+      }
+
+      for (let segment of snake) {
+        if (head.x === segment.x && head.y === segment.y) {
+          gameOver();
+          return;
+        }
+      }
+
+      snake.unshift(head);
+
+      if (head.x === food.x && head.y === food.y) {
+        snakeScore += 10;
+        document.getElementById('snake-score').textContent = snakeScore;
+        food = {
+          x: Math.floor(Math.random() * tileCount),
+          y: Math.floor(Math.random() * tileCount)
+        };
+      } else {
+        snake.pop();
+      }
+
+      drawSnake();
+    }
+
+    function gameOver() {
+      snakeGameOver = true;
+      snakeStarted = false;
+      if (snakeScore > snakeHigh) {
+        snakeHigh = snakeScore;
+        document.getElementById('snake-high').textContent = snakeHigh;
+      }
+      document.getElementById('snake-msg').textContent = `Game Over! Skor: ${snakeScore} 💀`;
+      if (snakeInterval) clearInterval(snakeInterval);
+    }
+
+    function snakeControl(dir) {
+      if (!snakeStarted) {
+        snakeStarted = true;
+        document.getElementById('snake-msg').textContent = '';
+        snakeInterval = setInterval(snakeLoop, 150);
+      }
+
+      if (dir === 'up' && direction.y === 0) direction = { x: 0, y: -1 };
+      if (dir === 'down' && direction.y === 0) direction = { x: 0, y: 1 };
+      if (dir === 'left' && direction.x === 0) direction = { x: -1, y: 0 };
+      if (dir === 'right' && direction.x === 0) direction = { x: 1, y: 0 };
+    }
+
+    function resetSnake() {
+      if (snakeInterval) clearInterval(snakeInterval);
+      initSnake();
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('snake-screen').classList.contains('active')) {
+        if (e.key === 'ArrowUp') snakeControl('up');
+        if (e.key === 'ArrowDown') snakeControl('down');
+        if (e.key === 'ArrowLeft') snakeControl('left');
+        if (e.key === 'ArrowRight') snakeControl('right');
+      }
+    });
+  </script>
+</body>
+</html>
